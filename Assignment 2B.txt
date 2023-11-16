@@ -1,0 +1,87 @@
+Assinment 2B
+create table Patient(p_id varchar(20),p_name varchar(20),doa date,age int,city varchar(20),primary key(p_id));
+create table Doctor(d_id varchar(20),d_name varchar(20),Quali varchar(20),Exp int,dept varchar(20),city varchar(20),salary int,primary key(d_id));
+create table Treats(d_id varchar(20),p_id varchar(20),Disease varchar(20),foreign key(p_id) REFERENCES Patient(p_id) on delete cascade,foreign key(d_id) REFERENCES Doctor(d_id) on delete set null);
+
+insert into Patient values ('p1','Abc','2023-08-12',34,'Pune'), ('p2','Xyz','2023-08-23',28,'Katraj'), ('p3','Xyz','2023-08-03',18,'Warje'),('p3','Lmn','2023-08-03',18,'Warje'),('p4','Asd','2023-08-07',54,'Vadgaon'),('p5','Yut','2023-08-14',25,'Vadgaon');
+
+
+insert into Doctor values('d1','Ram','MBBS',20,'Surgen','Pune',54000), ('d2','Shubham','MBBS',15,'Dentist','Ambegaon',60000),('d3','Suhas','MD',25,'Cardiologist','Nagpur',55000),('d4','Sham','MD',30,'Dentist','Latur',74000),('d5','Aditya','MD',27,'Cardiologist','Nashik',65000);
+
+insert into Treats values('d1','p1','Cancer'),('d2','p2','TB'),('d3','p3','Nemonia'),('d4','p4','Dengu'),('d5','p5','Cancer');
+
+1]Display all patient name between age 18-50
+select p_name from Patient where age between 18 and 50;
+
+2]Display list of doctors who are MD
+select d_name from Doctor where Qual="MD";
+
+3]Display doctor whose experience is more than 20 years
+select d_name from Doctor where Exp>20;
+
+4]Display patient suffering from cancer
+select p_name from Patient,Treats where Treats.Disease="Cancer" and Treats.p_id=Patient.p_id;
+
+5]Display patient name whose name starts with a, ends with a and have exactly 5 letters
+select p_name from Patient where p_name like "a%";
+select p_name from Patient where p_name like "%a";
+select p_name from Patient where p_name like "_____";
+
+6]Remove all records of patient with patient id = p2
+delete from Patient where p_id="p2";
+select * from Patient;
+
+
+7]Remove all records of doctor suhas
+delete from Doctor where d_name="Suhas";
+select * from Doctor;
+
+8]Change qualification of doctor Shubham to MD
+update Doctor set Quali="MD" where d_name="Shubham";
+select * from Doctor;
+
+9]Give 5% and 10% salary increment to department dentist and cardiologist respectively
+update Doctor set salary=case when dept="Dentist" then salary+(salary*0.05) when dept="Cardiologist" then salary+(salary*0.10) else salary*1 end;
+select * from Doctor;
+
+10]Display department wise total salary of doctor
+select dept,sum(salary) from Doctor group by dept ;
+
+11]Find department which has highest average salary 
+select dept,avg(salary) from Doctor group by dept having avg(salary)>=all(select avg(salary) from Doctor group by dept);
+
+12]Find average salary of doctors in dentist department
+select avg(salary) from Doctor where dept="Dentist";
+
+13]Find department where average salary of doctor is more than 50000
+select dept from Doctor group by dept having avg(salary)>50000;
+
+14]Find out how many doctors work in hospital
+select count(d_id) from Doctor;
+
+15]Find out how many doctors actually treated patient 
+select count(distinct d_id) from Treats;
+
+16]List cities in which doctor and patient lives 
+select city from Doctor union select city from Patient;
+
+17]List cities where patient, doctor both lives
+select d.city from Doctor as d,Patient as p where d.city=p.city;
+
+18]Find doctor who have not treated patient
+select d_name,d_id from Doctor where d_id not in(select distinct d_id from Treats);
+
+19]Display name of doctor as a single column
+select d_name from Doctor;
+
+20]Let duplicate name appears many times
+update Doctor set d_name="Ram" where d_id="d2";
+select d_name from Doctor;
+
+21]Whats the total money collected so far from the treatment of patient
+alter table Patient add column Money int(10);
+select * from Patient;
+select p_name,sum(Money) from Patient group by p_name;
+
+22]Find average salary of each department
+select avg(salary) from Doctor group by dept;

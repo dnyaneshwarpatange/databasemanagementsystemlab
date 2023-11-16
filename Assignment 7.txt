@@ -1,0 +1,110 @@
+Assinment 7
+create table library(B_id int,Title varchar(20),Authors varchar(20),Edition int,no_of_c int);
+create table lib_audit(B_id int,Title varchar(20),Authors varchar(20),Edition int,no_of_c int,date_of_mod date,type_of_op varchar(10),username varchar(20));
+create table transaction(Trans_id int,B_id int,I_R char(1),no_of_c int);
+
+
+insert into library values(1,"TOC","V.v Richard",2,4),(2,"CNS","Forouzan",4,5),(3,"ISEE","Rahul De",3,5),(4,"DBMS","Silberschatz",3,2),(5,"Python","Sumita Arora",5,6);
+
+
+select * from library;
+
+delimiter $
+
+create trigger t 
+after update 
+on library 
+for each row 
+begin 
+declare 
+a varchar(10); 
+set a="updated";
+insert into lib_audit values(old.B_id,old.Title,old.Authors,old.Edition,old.no_of_c,curdate(),a,current_user());
+end $
+
+
+delimiter ;
+
+update library set Authors="Kapil-Mishra" where B_id=1;
+
+select * from lib_audit;
+
+
+1. Create a trigger to keep the track of records that are updated or deleted from the library table 
+.The old values of updated or deleted record should be added in library audit table along with the 
+date of modification ,type of modification and the user who performed the modification.
+
+delimiter $
+
+create trigger t1 
+after delete 
+on library 
+for each row 
+begin 
+declare 
+b varchar(10);
+set 
+b="deleted";
+insert into lib_audit values(old.B_id,old.Title,old.Authors,old.Edition,old.no_of_c,curdate(),b,current_user());
+end
+$
+
+delimiter ;
+
+delete from library where B_id=3;
+
+select * from lib_audit;
+
+
+2.To create a trigger to check the number of copies available before issuing a book if number of 
+copies issuing > the number of books available then issue the number of books which are 
+available.
+
+delimiter $
+
+create trigger t2 
+before insert 
+on transaction 
+for each row 
+begin 
+declare 
+no int;
+if new.I_R="I" then 
+	select no_of_c into no from library where B_id=new.B_id;
+	if new.no_of_c > no then 
+		set new.no_of_c=no;
+	end if;
+end if;
+end $
+
+delimiter ;
+
+insert into transaction values(10,1,"I",3);
+
+3.To update the number of copies available after the book is issued or returned. 
+
+delete from transaction;
+
+delimiter $
+
+create trigger t3 after insert on transaction for each row 
+begin
+if new.I_R="I" then
+update library 
+set 
+no_of_c=no_of_c-new.no_of_c where B_id=new.B_id;
+else update library 
+set 
+no_of_c=no_of_c+new.no_of_c where B_id=new.B_id;
+end if;
+end $
+
+delimiter ;
+
+insert into transaction values(10,2,"I",7);
+select * from library;
+insert into transaction values(14,5,"I",3);
+select * from library;
+insert into transaction values(12,2,"R",3);
+select * from library;
+select * from transaction;

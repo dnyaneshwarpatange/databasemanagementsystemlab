@@ -1,0 +1,108 @@
+Assignment B1
+Mongodb
+CRUD operation
+
+Articles (Tittle, Content, Author, Author_age, Dop, Category, Comment)
+
+
+
+1.Insert
+db.ar.insertOne( { 
+Title:"c",
+Content:"Procedural language",
+Author:"Yashwant Kanetkar",
+Author_age:25,
+DOP:new Date("2016-05-13T00:00:00Z"),
+Category:"IT",
+"Comment":[{Name:"Sandesh",Remarks:"Very Good"},{Name:"Ravi",Remarks:"Nice"}] } )
+
+db.ar.insertOne(
+{
+Title:"c++",
+Content:"Object Oriented language",
+Author:"E Balgurusamy",
+Author_age:43,
+DOP:new Date("2019-09-25T00:00:00Z"),
+Category:"CS",
+"Comment":[{Name:"Suresh",Remarks:"Excelent"},{Name:"Raju",Remarks:"One of the best"}]
+})
+
+db.ar.insertOne({ 
+Title:"Python",
+Content:"Programming language",
+Author:"Sumita Arora",
+Author_age:38,
+DOP:new Date("2014-10-05T00:00:00Z"),
+Category:"CS",
+"Comment":[{Name:"Kartik",Remarks:"Nice"},{Name:"Kiran",Remarks:"Good"}] 
+})
+
+2.Display
+-first document found in db
+db.ar.findOne()
+
+-first document belonging to a certain Author say “Sharma” found in
+db.ar.findOne( {Author : "Sumita Arora"} )
+
+
+3.Modify the comment made by certain person on a certain article.
+db.ar.update({Title:"c++", "Comment.Name":"Raju"},{$set:{"Comment.$.Remarks":"Nice"}})
+db.ar.findOne({Title:"c++"})
+
+============================================================
+4.Insert record with save method with and without objectID
+===============
+db.ar.updateOne({ _id: ObjectId("6555e95fba2dce289d5ea4a8") },
+  {
+    $set: {
+      Title: "DBMS",
+      Content: "Database",
+      Author: "Silberscahtz",
+      Author_age: 40,
+      DOP: ISODate("2002-06-07"),
+      Category: "COMP",
+      Comment:[{Name:"Shai",Remarks:"Great"},{Name:"Dabang",Remarks:"Okk"}]}})
+
+db.ar.updateOne(
+  { _id: 1 },
+  {
+    $set: {
+      Title: "TOC",
+      Content: "Computation",
+      Author: "Kapil Mishra",
+      Author_age: 44,
+      DOP: ISODate("2005-06-07"),
+      Category: "IT",
+      Comment: [
+        { Name: "Hope", Remarks: "Good Book" },
+        { Name: "Sallu", Remarks: "Nice book!" }
+      ]
+    }
+  },
+  { upsert: true }
+);
+
+
+db.ar.find().pretty()
+
+5.Update collection with save method.
+db.ar.save({_id:1,Title:"DBMS",Content:"Structured Database",Author:"Silber",Author_age:50,DOP:ISODate("2002-06-07"),Category:"Comp",Comment:[{Name:"Shai",Remarks:"Great book"},{Name:"Dabang",Remarks:"Okk"}]})
+
+db.ar.findOne({_id:1}) 
+=======================================================
+
+6.Add one more comment for particular title
+db.ar.update({Title:"Python"},{$push:{Comment:{Name:"Hope",Remarks:"Excellent"}}})
+db.ar.findOne({Title:"TOC"})
+
+7.Delete the documents whose author age is less than 30.
+db.ar.remove({Author_age: { $lt: 30 }})
+
+8.Delete All Documents from a Collection
+db.ar.remove({})
+
+9.Delete the Article collection
+db.ar.drop()
+
+show collections
+show dbs

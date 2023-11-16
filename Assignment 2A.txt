@@ -1,0 +1,106 @@
+Assinment 2A
+create table dept(dept_no int, dept_name varchar(50) unique, building_name varchar(50));
+create table instr(instr_id int, instr_name varchar(40) not null, dept_no int, salary int,mob_no long);
+create table course(course_id int, course_title varchar(40), dept_no int, credits int)
+create table teaches(teacher_id int, course_id int, semester int, year int);
+
+1] Add primary key to tables 
+alter table dept add primary key (dept_no);
+alter table course add primary key (course_id);
+
+2]Add foreign key in tables
+alter table instr add foreign key(dept_no) references dept(dept_no);
+alter table course add foreign key(dept_no) references dept(dept_no);
+alter table teaches add foreign key(course_id) references course(course_id);
+
+3] Modify table department by adding column budget
+alter table dept add column budget int;
+
+4] Create a unique index sr on mobile number of instructor table
+create unique index sr on instr(mob_no(10));
+
+5] Insert 5 records in each table
+insert into dept values(101, 'Computer', 'SKNCOE', 500000),(102, 'IT', 'SKNCOE', 250000).(103, 'ENTC', 'SKNCOE', 200000),(104, 'Civil', 'SKNCOE', 150000),(105, 'Mechanical', 'SKNCOE', 100000);
+select * from dept;
+
+insert into instr values(01, 'Kavita', 101, 55000, 9876324510),(02, 'Sagar', 102, 48000, 8790543288),(03, 'Manisha', 103, 40000, 7978056437),(04, 'Pramod', 104, 35000, 8987670021),(05, 'Anita', 104, 38000, 8215786112);
+select * from instr;
+
+insert into course values(211, 'BE_Comp', 101, 44),(212, 'BTech', 101, 44),(213, 'BE_Mech', 105, 44),(214, 'BE_Civil', 104, 43),(215, 'BTech', 102, 44);
+select * from course;
+
+insert into teaches values(111, 211, 3, 2023),(112, 212, 4, 2023),(113, 213, 4, 2022),(114, 214, 2, 2021),(115, 215, 2, 2023);
+select * from teaches;
+
+6] Create a view of instructor relation except the salary field
+create view instrview as select instr_id, instr_name, dept_no, mob_no from instr;
+desc instrview;
+select * from instrview;
+
+7] Insert records into instructor table using newly created view
+insert into instrview values(6, 'Anil', 105, 7689005643); 
+select * from instrview;
+select * from instr;
+
+8] Update the department number of particular instructor using update view
+update instrview set dept_no=105 where instr_id=5;
+select * from instrview;
+
+9] Delete Record of particular instructor from instructor view
+delete from instrview where instr_id=6;
+select * from instrview;
+
+10] Delete the last view
+drop view instrview;
+show tables;
+
+11] Remove the budget from department table
+alter table dept drop budget;
+desc dept;
+
+12] Increase the size of title field of course relation
+alter table course modify course_title varchar(50);
+
+13] Delete index from Instructor table
+alter table instr drop index sr;
+
+14] Rename the Course table to another table name 
+rename table course to subject;
+show tables;
+
+15] Create a view by showing a instructor name and title of the course they teaches
+create view newview as select instr_name, course_title from instr, subject where instr.dept_no=subject.dept_no;
+select * from newview;
+
+16] Delete primary key from department table
+alter table instr drop foreign key instr_ibfk_1;
+desc instr;
+alter table subject drop foreign key subject_ibfk_1;
+desc subject;
+alter table dept drop primary key;
+
+17] Create a sequence of use auto increment attribute on course_id starting from 51
+alter table subject auto_increment=51;
+
+18] Create Database and show all databases
+create database university;
+use University;
+show databases;
+
+19] Create table and show all the tables
+show tables;
+
+20] Delete all records with truncate command
+truncate table teaches;
+alter table teaches drop foreign key teaches_ibfk_1;
+truncate table subject;
+truncate table instr;
+truncate table dept;
+select * from dept;
+select * from instr;
+select * from subject;
+select * from teaches;
+
+21] Delete Teaches table
+drop table teaches;
+show tables;

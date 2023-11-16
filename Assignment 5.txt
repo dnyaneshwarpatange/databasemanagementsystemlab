@@ -1,0 +1,54 @@
+Assinment 5
+
+create table stud_marks(name varchar(30),total_marks int);
+create table result(roll_no int,name varchar(30),class varchar(20));
+desc stud_marks;
+desc result; 
+
+
+delimiter /
+
+create procedure proc_grade(IN roll int, IN name varchar(30), In marks int)
+BEGIN
+DECLARE class varchar(30);
+if marks >= 990 AND marks <= 1500 then
+set class = 'Distinction';
+elseif marks >= 900 AND marks <= 989 then
+set class = 'First'; 
+elseif marks >= 825 AND marks <= 899 then
+set class = 'Second'; 
+elseif marks >= 824 AND marks <= 700 then
+set class = 'Pass';
+else
+set class = 'Fail';
+end if;
+INSERT INTO stud_marks values(name, marks);
+INSERT INTO Result values(roll, name, class);
+END
+/
+
+delimiter ;
+
+call proc_grade(1,'Bhupendra Jogi',1111);
+call proc_grade(2,'Binod',891);
+call proc_grade(3,'Pablo Emilio Escobar',967);
+
+select * from stud_marks;
+select * from result;
+
+
+delimiter /
+
+create function total_stud(class_name varchar(50)) 
+returns int
+deterministic
+begin
+declare
+total int;
+select distinct count(*) into total from result where class = class_name;
+return total;
+end;
+/
+
+delimiter;
+select total_stud('Distinction'); 

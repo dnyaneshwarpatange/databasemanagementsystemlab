@@ -1,0 +1,68 @@
+Assinment 3
+
+create table Branchmaster(branch_id int primary key,branch_name varchar(20));
+-------
+create table Empmaster(emp_id int primary key,emp_name varchar(20),branch_id int,salary int,dept varchar(20),manager_id int,foreign key(branch_id) references Branchmaster(branch_id),foreign key(manager_id) references Empmaster(emp_id));
+-------
+create table contactdetails(emp_id int,email_id varchar(25),phone_no bigint, foreign key(emp_id) references Empmaster(emp_id) on Delete set null);
+-------
+create table EmpAddressdetails(emp_id int,street varchar(20),city varchar(20),state varchar(20),foreign key(emp_id) references Empmaster(emp_id) on delete cascade);
+-------
+create table Branchaddress(branch_id int,city varchar(20),state varchar(20));
+
+
+1. Insert 5 records in each table.
+
+2. List the employee details along with branch name using the inner join and in the order of emp_no.
+select emp_id,emp_name,branch_name from Empmaster e inner join Branchmaster b on e.branch_id=b.branch_id order by emp_id;
+
+3. List the details of employee who belong to admin department along with the branch name to which they belong
+select emp_name,dept,branch_name from Branchmaster b,Empmaster e where b.branch_id=e.branch_id and dept="Admin";
+
+4. List the employee name along with the phone no and city using inner join.
+select emp_name,phone_no,city from Empmaster e inner join Empaddressdetails a on e.emp_id=a.emp_id inner join contactdetails c on e.emp_id=c.emp_id; 
+
+5. List the employee name with the contact details (if any).
+select emp_name,email_id,phone_no from Empmaster e left join contactdetails c on e.emp_id=c.emp_id;
+
+6. List the employee contact details irrespective of whether they are working or have left. 
+delete from Empmaster where emp_id=12; 
+delete from Empmaster where emp_id=13; 
+
+select * from Empmaster;
+select emp_name,email_id,phone_no from Empmaster e right join contactdetails c on e.emp_id=c.emp_id; 
+
+7. Retrieve the employee name and their respective manager name. 
+select e1.emp_name,e2.emp_name as Manager from Empmaster e1,Empmaster e2 where e1.manager_id=e2.emp_id;
+
+8. List the employee details along with branch name using natural join. 
+select emp_name,dept,branch_name,salary from Branchmaster b natural join Empmaster e;
+
+9. List the employee names who work at the vadgaon branch along with the city of that employee.
+select e.emp_id,emp_name,city from Empmaster e,Branchmaster b,Empaddressdetails a where b.branch_name="Vadgaon" and b.branch_id=e.branch_id and e.emp_id=a.emp_id;
+
+10. Find the employee who works at the vadgaon branch with salary>10000 and list the employee names with streets and city they live in.
+select emp_name,street,city,salary from Empmaster e,Empaddressdetails a where e.emp_id=a.emp_id and e.emp_id in(select emp_id from Branchmaster b,Empmaster c where branch_name="Vadgaon" and salary>10000 and b.branch_id=c.branch_id); 
+
+11. Find the employees who live and work in same city.
+select emp_name from Empmaster e,Branchmaster b,Empaddressdetails a,Branchaddress c where e.emp_id=a.emp_id and b.branch_id=e.branch_id and c.branch_id=b.branch_id and c.city=a.city; 
+
+12. Find the employees whose salaries are more than everybody who works at branch vadgaon.
+select emp_name from Empmaster where salary>all(select salary from Empmaster e,Branchmaster b where e.branch_id=b.branch_id and branch_name="Vadgaon");
+
+13. Create a view which will contain total employees at each branch.
+create view TotEmp as select branch_name,count(emp_id) as TotalEmployees from Empmaster e,Branchmaster b where e.branch_id=b.branch_id group by e.branch_id;
+
+select * from TotEmp; 
+
+14. List the branch names where employee have a salary>100000. 
+select branch_name from Empmaster e,Branchmaster b where e.branch_id=b.branch_id and salary>100000; 
+
+15. Create a view which will show the avg salary and the total salary at each branch.
+create view Emp as select branch_name,avg(salary),sum(salary) from Empmaster e,Branchmaster b where e.branch_id=b.branch_id group by e.branch_id;
+
+select * from Emp;
+
+16. Find the employee who do not have a job at vadgaon branch.
+select emp_name from Empmaster e,Branchmaster b where e.branch_id=b.branch_id and e.branch_id not in(select branch_id from Branchmaster where branch_name="vadgaon");
+

@@ -1,0 +1,45 @@
+Assinment 4
+(Live Oracle)
+
+create table borrower(roll_no int,name varchar(20),date_of_i date,name_of_book varchar(20),status varchar(10));
+create table fine(roll_no int,date_of_r date,amt int);
+insert into borrower values(1,'harsh','12-sep-2023','harry potter','i');
+insert into borrower values(2,'sandesh','15-sep-2023','iceage','r'); 
+insert into borrower values(3,'Rahul','20-aug-2023','pokemon','i');
+insert into borrower values(4,'sahil','25-aug-2023','duel','r');
+insert into borrower values(5,'ishwari','02-sep-2023','hindikatha','i');
+
+select * from borrower;
+
+DECLARE
+  roll_number INT := 1;
+  book_name VARCHAR(20) := 'harry potter';
+  borrowed_days INT := 0;
+  return_date DATE;
+  fine_amount INT := 0;
+BEGIN
+  SELECT date_of_i INTO return_date
+  FROM borrower
+  WHERE roll_no = roll_number AND name_of_book = book_name;
+  borrowed_days := TRUNC(SYSDATE) - TRUNC(return_date);
+  IF borrowed_days >= 15 THEN
+    fine_amount := 15 * 5 + (borrowed_days - 30) * 50;
+  END IF;
+  UPDATE borrower
+  SET status = 'r'
+  WHERE roll_no = roll_number AND name_of_book = book_name;
+  IF fine_amount > 0 THEN
+    INSERT INTO fine
+    VALUES (roll_number, SYSDATE, fine_amount);
+  END IF;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No data found');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('An exception occurred');
+END;
+/
+
+select * from fine;
+select * from borrower;
+

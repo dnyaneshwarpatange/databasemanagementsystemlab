@@ -1,0 +1,68 @@
+Assinment 6
+liveSQL (Oracle)
+
+create table stud(roll_no int, name varchar(20), marks int); 
+insert into stud values(1, 'abc', 39);
+insert into stud values(2, 'pqr', 35);
+insert into stud values(3, 'xyz', 41);
+insert into stud values(4, 'cde', 37);
+insert into stud values(5, 'lmn', 46);
+
+select * from stud;
+
+begin 
+update stud 
+set marks = 40 where marks between 35 and 39; 
+if SQL%notfound then 
+dbms_output.put_line('No Records were Updated !!'); 
+else 
+dbms_output.put_line('Total Records updated are :'||sql%rowcount); 
+end if; 
+end;
+/
+
+select * from stud;
+
+declare begin 
+update stud set marks = 45 where marks between 41 and 45;
+if
+SQL%notfound
+then
+dbms_output.put_line('No Records were Updated !!');
+else 
+dbms_output.put_line('Total Records updated:'||sql%rowcount); 
+end if;
+end;
+/
+
+select * from stud;
+
+
+create table newstud(roll_no int, name varchar(20), marks int);
+
+insert into newstud values(1, 'abc', 45); 
+insert into newstud values(3, 'xyz', 45); 
+insert into newstud values(7, 'xyzr', 95); 
+insert into newstud values(8, 'pqrs', 65);
+
+select * from newstud; 
+
+declare 
+cursor cur_s is select* from stud; 
+cursor cur_new(a int) is select * from newstud where roll_no =a; 
+nrec newstud%rowtype;
+begin 
+for srec 
+in cur_s loop 
+open cur_new(srec.roll_no); 
+fetch cur_new into nrec;
+if 
+cur_new%notfound then 
+insert into newstud values(srec.roll_no, srec.name, srec.marks); 
+end if;
+close cur_new;
+end loop;
+end;
+/
+
+select * from newstud; 
